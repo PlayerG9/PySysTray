@@ -285,7 +285,7 @@ class Icon(_base.Icon):
                     self._display.flush()
 
                     # Wait for the mainloop to execute the actual method, wait
-                    # for completion and reraise any exceptions
+                    # for completion and re-raise any exceptions
                     result = self._queue.get()
                     if result is not True:
                         six.reraise(*result)
