@@ -9,6 +9,9 @@ you need to create menus etc. on your own
 (☞ﾟヮﾟ)☞        I NEED YOUR HELP        ☜(ﾟヮﾟ☜)  
 Please help me by implementing the other platforms
 </pre>
+the `not_supported` directory contains the raw code from `pystray`
+you can use this as basis when implemented a new platform
+
 
 # Supported platforms [^1]
 
