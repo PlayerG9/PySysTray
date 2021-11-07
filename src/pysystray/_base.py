@@ -18,8 +18,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import functools
-import inspect
-import itertools
 import logging
 import threading
 
@@ -79,11 +77,12 @@ class Icon(object):
     HAS_NOTIFICATION = True
 
     def __init__(
-            self, name, icon=None, title=None, menu=None, **kwargs):
+            self, name, icon=None, title=None, left_click=None, right_click=None, **kwargs):
         self._name = name
         self._icon = icon or None
         self._title = title or ''
-        self._menu = menu
+        self.left_click = left_click
+        self.right_click = right_click
         self._visible = False
         self._icon_valid = False
         self._log = logging.getLogger(__name__)
@@ -91,7 +90,7 @@ class Icon(object):
         self._running = False
         self.__queue = queue.Queue()
 
-        prefix = self.__class__.__module__.rsplit('.', 1)[-1][1:] + '_'
+        prefix = self.__class__.__module__.rsplit('.', 1)[-1][1:] + '_'  # no idea what this does
         self._options = {
             key[len(prefix):]: value
             for key, value in kwargs.items()
@@ -100,11 +99,6 @@ class Icon(object):
     def __del__(self):
         if self.visible:
             self._hide()
-
-    def __call__(self):
-        if self._menu is not None:
-            self._menu(self)
-            self.update_menu()
 
     @property
     def name(self):
@@ -144,19 +138,6 @@ class Icon(object):
             self._title = value
             if self.visible:
                 self._update_title()
-
-    @property
-    def menu(self):
-        """The menu.
-
-        Setting this to a falsy value will disable the menu.
-        """
-        return self._menu
-
-    @menu.setter
-    def menu(self, value):
-        self._menu = value
-        self.update_menu()
 
     @property
     def visible(self):
@@ -238,22 +219,6 @@ class Icon(object):
             self._setup_thread.join()
         self._running = False
 
-    def update_menu(self):
-        """Updates the menu.
-
-        If the properties of the menu descriptor are dynamic, that is, any are
-        defined by callables and not constants, and the return values of these
-        callables change by actions other than the menu item activation
-        callbacks, calling this function is required to keep the menu in sync.
-
-        This is required since not all supported platforms allow the menu to be
-        generated when shown.
-
-        For simple use cases where menu changes are triggered by interaction
-        with the menu, this method is not necessary.
-        """
-        self._update_menu()
-
     def notify(self, message, title=None):
         """Displays a notification.
 
@@ -286,10 +251,7 @@ class Icon(object):
         is called.
         """
         self._running = True
-        try:
-            self.update_menu()
-        finally:
-            self.__queue.put(True)
+        self.__queue.put(True)
 
     def _handler(self, callback):
         """Generates a callback handler.
@@ -303,11 +265,8 @@ class Icon(object):
         :return: a wrapped callback
         """
         @functools.wraps(callback)
-        def inner(*args, **kwargs):
-            try:
-                callback(self)
-            finally:
-                self.update_menu()
+        def inner(*_, **__):
+            callback(self)
 
         return inner
 
@@ -337,13 +296,6 @@ class Icon(object):
 
     def _update_title(self):
         """Updates the title for an already shown icon.
-
-        This is a platform dependent implementation.
-        """
-        raise NotImplementedError()
-
-    def _update_menu(self):
-        """Updates the native menu state to mimic :attr:`menu`.
 
         This is a platform dependent implementation.
         """
