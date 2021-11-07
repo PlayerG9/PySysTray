@@ -8,16 +8,15 @@ you need to create menus etc. on your own
 
 # Supported platforms [^1]
 
-| Platform     | Tested | Works [^2] |
-| ------------ | ------ | ---------- |
-| Windows      | ✓      | ✓         |
-| Linux/Xorg   | ✕      | ✕         |
-| Linux/GNOME  | ✕      | ✕         |
-| Linux/Ubuntu | ✕      | ✕         |
-| macOS        | ✕      | ✕         |
+| Platform     | Tested | Supported |
+| ------------ | ------ | --------- |
+| Windows      | ✓      | ✓        |
+| Linux/Xorg   | ✕      | ✕        |
+| Linux/GNOME  | ✕      | ✕        |
+| Linux/Ubuntu | ✕      | ✕        |
+| macOS        | ✕      | ✕        |
 
 [^1]: I need tester. please report bugs etc. under your platform  
-[^2]: Currently only Windows is supported. I would appriciate it if you could make it work on other platforms
 
 
 # Example usage
