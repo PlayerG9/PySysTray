@@ -16,38 +16,14 @@ details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-
-import os
 import sys
 
 from ._info import __author__, __version__
 
 
-def backend():
-    """Returns the backend module.
-    """
-    import importlib
-
-    backend_name = os.environ.get('PYSYSTRAY_BACKEND', None)
-    if backend_name:
-        modules = [backend_name]
-    elif sys.platform == 'darwin':
-        modules = ['darwin']
-    elif sys.platform == 'win32':
-        modules = ['win32']
-    else:
-        modules = ['appindicator', 'gtk', 'xorg']
-
-    errors = []
-    for module in modules:
-        try:
-            return importlib.import_module(__package__ + '._' + module)
-        except ImportError as e:
-            errors.append(e)
-
-    raise ImportError('this platform is not supported: {}'.format(
-        '; '.join(str(e) for e in errors)))
-
-
-Icon = backend().Icon
-del backend
+if sys.platform == 'win32':
+    from ._win32 import Icon
+# elif sys.platform == 'darwin':
+#     from ._darwin import Icon
+else:
+    raise ImportError('this platform is not supported')
