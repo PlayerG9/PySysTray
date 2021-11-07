@@ -6,7 +6,7 @@ it is intended to be more plexible and for gui-packages.
 you need to create menus etc. on your own
 
 
-# Supported platforms
+# Supported platforms [^1]
 
 | Platform     | Tested |
 | ------------ | ------ |
@@ -16,5 +16,5 @@ you need to create menus etc. on your own
 | Linux/Ubuntu | ✕      |
 | macOS        | ✕      |
 
-[^]: I need tester. please report bugs etc. under your platform
+[^1]: I need tester. please report bugs etc. under your platform
 
