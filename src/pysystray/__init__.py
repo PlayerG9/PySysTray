@@ -27,10 +27,7 @@ elif sys.platform == 'linux':  # Linux/Ubuntu
     try:
         from ._gtk import Icon
     except Exception:
-        try:
-            from ._appindicator import Icon
-        except Exception:
-            raise ImportError('this platform is not supported')
+        raise ImportError('this platform is not supported')
 # elif sys.platform == 'darwin':  # macOs
 #     from ._darwin import Icon
 else:
