@@ -21,9 +21,17 @@ import sys
 from ._info import __author__, __version__
 
 
-if sys.platform == 'win32':
+if sys.platform == 'win32':  # Windows
     from ._win32 import Icon
-# elif sys.platform == 'darwin':
+elif sys.platform == 'linux':  # Linux/Ubuntu
+    try:
+        from ._gtk import Icon
+    except Exception:
+        try:
+            from ._appindicator import Icon
+        except Exception:
+            raise ImportError('this platform is not supported')
+# elif sys.platform == 'darwin':  # macOs
 #     from ._darwin import Icon
 else:
     raise ImportError('this platform is not supported')
