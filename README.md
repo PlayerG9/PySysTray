@@ -5,16 +5,20 @@ To make it clear: **this package is a modified version of [moses-palmer/pystray]
 it is intended to be more plexible and for gui-packages.
 you need to create menus etc. on your own
 
+<pre>
+(☞ﾟヮﾟ)☞        I NEED YOUR HELP        ☜(ﾟヮﾟ☜)  
+Please help me by implementing the other platforms
+</pre>
 
 # Supported platforms [^1]
 
-| Platform     | Tested | Supported |
-| ------------ | ------ | --------- |
-| Windows      | ✓      | ✓        |
-| Linux/Xorg   | ✕      | ✕        |
-| Linux/GNOME  | ✕      | ✕        |
-| Linux/Ubuntu | ✕      | ✕        |
-| macOS        | ✕      | ✕        |
+| Platform     | Supported | Tested |
+| ------------ | --------- | ------ |
+| Windows      | ✓         | ✓     |
+| Linux/Xorg   | ✕         | ✕     |
+| Linux/GNOME  | ✕         | ✕     |
+| Linux/Ubuntu | ✕         | ✕     |
+| macOS        | ✕         | ✕     |
 
 [^1]: I need tester. please report bugs etc. under your platform  
 
