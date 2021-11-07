@@ -26,7 +26,7 @@ def backend():
     """
     import importlib
 
-    backend_name = os.environ.get('PYSTRAY_BACKEND', None)
+    backend_name = os.environ.get('PYSYSTRAY_BACKEND', None)
     if backend_name:
         modules = [backend_name]
     elif sys.platform == 'darwin':
@@ -49,5 +49,3 @@ def backend():
 
 Icon = backend().Icon
 del backend
-
-from ._base import Menu, MenuItem
