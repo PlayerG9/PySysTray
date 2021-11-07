@@ -36,7 +36,7 @@ def serialized_image(image, format, extension=None):
 
     :param extension: The file extension. This defaults to ``format``
         lowercased.
-    :type extensions: str or None
+    :type extension: str or None
     """
     fd, path = tempfile.mkstemp('.%s' % (extension or format.lower()))
     try:
