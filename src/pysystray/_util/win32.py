@@ -135,6 +135,7 @@ class MENUITEMINFO(ctypes.Structure):
         ('cch', wintypes.UINT),
         ('hbmpItem', wintypes.HBITMAP)]
 
+
 LPMENUITEMINFO = ctypes.POINTER(MENUITEMINFO)
 
 
@@ -171,6 +172,7 @@ class NOTIFYICONDATAW(ctypes.Structure):
     _anonymous_ = [
         'version_or_timeout']
 
+
 LPNOTIFYICONDATAW = ctypes.POINTER(NOTIFYICONDATAW)
 
 
@@ -178,6 +180,7 @@ class TPMPARAMS(ctypes.Structure):
     _fields_ = [
         ('cbSize', wintypes.UINT),
         ('rcExclude', wintypes.RECT)]
+
 
 LPTPMPARAMS = ctypes.POINTER(TPMPARAMS)
 
