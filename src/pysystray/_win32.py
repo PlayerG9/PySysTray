@@ -36,8 +36,6 @@ class Icon(_base.Icon):
         self._atom = self._register_class()
         self._icon_handle = None
         self._hwnd = None
-        self._menu_hwnd = None
-        self._hmenu = None
 
         # This is a mapping from win32 event codes to handlers used by the
         # mainloop
@@ -97,20 +95,6 @@ class Icon(_base.Icon):
             win32.NIF_INFO,
             szInfo='')
 
-    def _update_menu(self):
-        try:
-            hmenu, callbacks = self._menu_handle
-            win32.DestroyMenu(hmenu)
-        except:
-            pass
-
-        callbacks = []
-        hmenu = self._create_menu(self.menu, callbacks)
-        if hmenu:
-            self._menu_handle = (hmenu, callbacks)
-        else:
-            self._menu_handle = None
-
     def _run(self):
         # Create the message loop
         msg = wintypes.MSG()
@@ -119,7 +103,6 @@ class Icon(_base.Icon):
             lpmsg, None, win32.WM_USER, win32.WM_USER, win32.PM_NOREMOVE)
 
         self._hwnd = self._create_window(self._atom)
-        self._menu_hwnd = self._create_window(self._atom)
         self._HWND_TO_ICON[self._hwnd] = self
 
         self._mark_ready()
@@ -167,10 +150,6 @@ class Icon(_base.Icon):
                 pass
 
             win32.DestroyWindow(self._hwnd)
-            win32.DestroyWindow(self._menu_hwnd)
-            if self._menu_handle:
-                hmenu, callbacks = self._menu_handle
-                win32.DestroyMenu(hmenu)
             self._unregister_class(self._atom)
 
     def _on_stop(self, wparam, lparam):
@@ -189,30 +168,12 @@ class Icon(_base.Icon):
         displayed.
         """
         if lparam == win32.WM_LBUTTONUP:
-            self()
+            if self.left_click is not None:
+                self.left_click()
 
-        elif self._menu_handle and lparam == win32.WM_RBUTTONUP:
-            # TrackPopupMenuEx does not behave unless our systray window is the
-            # foreground window
-            win32.SetForegroundWindow(self._hwnd)
-
-            # Get the cursor position to determine where to display the menu
-            point = wintypes.POINT()
-            win32.GetCursorPos(ctypes.byref(point))
-
-            # Display the menu and get the menu item identifier; the identifier
-            # is the menu item index
-            hmenu, descriptors = self._menu_handle
-            index = win32.TrackPopupMenuEx(
-                hmenu,
-                win32.TPM_RIGHTALIGN | win32.TPM_BOTTOMALIGN
-                | win32.TPM_RETURNCMD,
-                point.x,
-                point.y,
-                self._menu_hwnd,
-                None)
-            if index > 0:
-                descriptors[index - 1](self)
+        elif lparam == win32.WM_RBUTTONUP:
+            if self.right_click is not None:
+                self.right_click()
 
     def _on_taskbarcreated(self, wparam, lparam):
         """Handles ``WM_TASKBARCREATED``.
@@ -248,69 +209,6 @@ class Icon(_base.Icon):
         win32.ChangeWindowMessageFilterEx(
             hwnd, win32.WM_TASKBARCREATED, win32.MSGFLT_ALLOW, None)
         return hwnd
-
-    def _create_menu(self, descriptors, callbacks):
-        """Creates a :class:`ctypes.wintypes.HMENU` from a
-        :class:`pystray.Menu` instance.
-
-        :param descriptors: The menu descriptors. If this is falsy, ``None`` is
-            returned.
-
-        :param callbacks: A list to which a callback is appended for every menu
-            item created. The menu item IDs correspond to the items in this
-            list plus one.
-
-        :return: a menu
-        """
-        if not descriptors:
-            return None
-
-        else:
-            # Generate the menu
-            hmenu = win32.CreatePopupMenu()
-            for i, descriptor in enumerate(descriptors):
-                # Append the callbacks before creating the menu items to ensure
-                # that the first item gets the ID 1
-                callbacks.append(self._handler(descriptor))
-                menu_item = self._create_menu_item(descriptor, callbacks)
-                win32.InsertMenuItem(hmenu, i, True, ctypes.byref(menu_item))
-
-            return hmenu
-
-    def _create_menu_item(self, descriptor, callbacks):
-        """Creates a :class:`pystray._util.win32.MENUITEMINFO` from a
-        :class:`pystray.MenuItem` instance.
-
-        :param descriptor: The menu item descriptor.
-
-        :param callbacks: A list to which a callback is appended for every menu
-            item created. The menu item IDs correspond to the items in this
-            list plus one.
-
-        :return: a :class:`pystray._util.win32.MENUITEMINFO`
-        """
-        if descriptor is _base.Menu.SEPARATOR:
-            return win32.MENUITEMINFO(
-                cbSize=ctypes.sizeof(win32.MENUITEMINFO),
-                fMask=win32.MIIM_FTYPE,
-                fType=win32.MFT_SEPARATOR)
-
-        else:
-            return win32.MENUITEMINFO(
-                cbSize=ctypes.sizeof(win32.MENUITEMINFO),
-                fMask=win32.MIIM_ID | win32.MIIM_STRING | win32.MIIM_STATE
-                | win32.MIIM_FTYPE | win32.MIIM_SUBMENU,
-                wID=len(callbacks),
-                dwTypeData=descriptor.text,
-                fState=0
-                | (win32.MFS_DEFAULT if descriptor.default else 0)
-                | (win32.MFS_CHECKED if descriptor.checked else 0)
-                | (win32.MFS_DISABLED if not descriptor.enabled else 0),
-                fType=0
-                | (win32.MFT_RADIOCHECK if descriptor.radio else 0),
-                hSubMenu=self._create_menu(descriptor.submenu, callbacks)
-                if descriptor.submenu
-                else None)
 
     def _message(self, code, flags, **kwargs):
         """Sends a message the the systray icon.
