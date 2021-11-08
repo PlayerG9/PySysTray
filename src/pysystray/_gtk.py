@@ -37,6 +37,8 @@ class Icon(GtkIcon):
         if self.icon:
             self._update_icon()
 
+        self.visible = True  # doesn't show naturally
+
     @mainloop
     def _show(self):
         self._status_icon.set_visible(True)
