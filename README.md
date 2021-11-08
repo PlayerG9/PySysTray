@@ -18,9 +18,10 @@ you can use this as basis when implemented a new platform
 | Platform     | Supported | Tested |
 | ------------ | --------- | ------ |
 | Windows      | ✓         | ✓     |
+| Linux/Mint   | ✓         | ✓     |
 | Linux/Xorg   | ✕         | ✕     |
 | Linux/GNOME  | ✕         | ✕     |
-| Linux/Ubuntu | ✕         | ✕     |
+| Linux/Ubuntu | ✓         | ✕     |
 | macOS        | ✕         | ✕     |
 
 [^1]: I need tester. please report bugs etc. under your platform  
